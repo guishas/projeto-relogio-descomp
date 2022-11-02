@@ -17,6 +17,11 @@ def converteCifrao(line):
   num = bin(int(items[-1]))[2:].zfill(9)
   return num
 
+def converteHashtag(line):
+  items = line.replace("\n", "").split(' ')
+  addr = bin(int(items[1].replace("#", "")))[2:].zfill(3)
+  return addr
+
 # Função para pegar o mnemônico de uma linha
 def converteMnemonico(line):
   return line.replace("\n", "").split(' ')[0]
@@ -24,11 +29,11 @@ def converteMnemonico(line):
 # Função para converter o que vem do arquivo de entrada para código assembly
 def converteParaLabel(line):
   if '@' in line:
-    l = converteMnemonico(line) + ' & \"' + converteArroba(line) + '\";'
+    l = converteMnemonico(line) + ' & \"' + converteHashtag(line) + '\" & \"' + converteArroba(line) + '\";'
   elif '$' in line:
-    l = converteMnemonico(line) + ' & \"' + converteCifrao(line) + '\";'
+    l = converteMnemonico(line) + ' & \"' + converteHashtag(line) + '\" & \"' + converteCifrao(line) + '\";'
   elif '%' in line:
-    l = converteMnemonico(line) + ' & \"' + line.split('%')[-1].replace("\n", "") + '\";'
+    l = converteMnemonico(line) + ' & \"' + '000\" & \"' + line.split('%')[-1].replace("\n", "") + '\";'
   else:
     l = line
 
@@ -73,21 +78,21 @@ with open(saida, "w+") as f:
   for line in lines:
     if not ':' in line:
       if '@' in line:
-        t = 'tmp(' + str(cont) + ') := ' + converteMnemonico(line) + ' & \"' + converteArroba(line) + '\"; -- ' + line.replace("\n", "") + '\n'
+        t = 'tmp(' + str(cont) + ') := ' + converteMnemonico(line) + ' & \"' + converteHashtag(line) + '\" & \"' + converteArroba(line) + '\"; -- ' + line.replace("\n", "") + '\n'
         cont+=1
       elif '$' in line:
-        t = 'tmp(' + str(cont) + ') := ' + converteMnemonico(line) + ' & \"' + converteCifrao(line) + '\"; -- ' + line.replace("\n", "") + '\n'
+        t = 'tmp(' + str(cont) + ') := ' + converteMnemonico(line) + ' & \"' + converteHashtag(line) + '\" & \"' + converteCifrao(line) + '\"; -- ' + line.replace("\n", "") + '\n'
         cont+=1
       elif '%' in line:
         label = converteLabel(line)
         tmp = int(labels[label]["pos"])
-        t = 'tmp(' + str(cont) + ') := ' + converteMnemonico(line) + ' & \"' + bin(tmp)[2:].zfill(9) + '\"; -- ' + line.replace("\n", "") + '\n'
+        t = 'tmp(' + str(cont) + ') := ' + converteMnemonico(line) + ' & \"000\" & \"' + bin(tmp)[2:].zfill(9) + '\"; -- ' + line.replace("\n", "") + '\n'
         cont+=1
       elif line.replace("\n", "").replace(" ", "") == "RET":
-        t = 'tmp(' + str(cont) + ') := ' + line.replace("\n", "") + ' & \"' + bin(0)[2:].zfill(9) + '\"; -- ' + line.replace("\n", "") + '\n'
+        t = 'tmp(' + str(cont) + ') := ' + line.replace("\n", "") + ' & \"000\" & \"' + bin(0)[2:].zfill(9) + '\"; -- ' + line.replace("\n", "") + '\n'
         cont+=1
       elif line.replace("\n", "") == "NOP":
-        t = 'tmp(' + str(cont) + ') := ' + line.replace("\n", "") + ' & \"' + bin(0)[2:].zfill(9) + '\"; -- ' + line.replace("\n", "") + '\n'
+        t = 'tmp(' + str(cont) + ') := ' + line.replace("\n", "") + ' & \"000\" & \"' + bin(0)[2:].zfill(9) + '\"; -- ' + line.replace("\n", "") + '\n'
         cont+=1
       else:
         t = line
