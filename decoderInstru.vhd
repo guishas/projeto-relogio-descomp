@@ -23,28 +23,43 @@ architecture comportamento of decoderInstru is
   constant RET  : std_logic_vector(3 downto 0) := "1010";
   constant GRT  : std_logic_vector(3 downto 0) := "1011";
   constant JGT  : std_logic_vector(3 downto 0) := "1100";
-  
-  alias WR : std_logic is saida(0);
- 
+  constant ADDI : std_logic_vector(3 downto 0) := "1101";
+  constant SUBI : std_logic_vector(3 downto 0) := "1110";
+
+  alias WR 			  : std_logic is saida(0);
+  alias RD 			  : std_logic is saida(1);
+  alias HAB_FLAG_GT : std_logic is saida(2);
+  alias HAB_FLAG_EQ : std_logic is saida(3);
+  alias OP_ULA      : std_logic_vector is saida(6 DOWNTO 4);
+  alias HAB_BAN_REG : std_logic is saida(7);
+  alias SEL_MUX     : std_logic is saida(8);
+  alias JMP_GT      : std_logic is saida(9);
+  alias JMP_EQ 	  : std_logic is saida(10);
+  alias JMP_SR 	  : std_logic is saida(11);
+  alias RET_SR 	  : std_logic is saida(12);
+  alias JUMP 		  : std_logic is saida(13);
+  alias HAB_RET 	  : std_logic is saida(14);
+	
  begin
-	
-	--WR <= '1' when (OPCODE = STA) else '0';
-	
-	
+		
+	WR 			<= '1' when (OPCODE = STA) else '0';
+	RD 			<= '1' when (OPCODE = STA OR OPCODE = SOMA OR OPCODE = SUB OR OPCODE = CEQ OR OPCODE = GRT) else '0';
+	HAB_FLAG_GT <= '1' when (OPCODE = GRT) else '0';
+	HAB_FLAG_EQ <= '1' when (OPCODE = CEQ) else '0';
+	HAB_BAN_REG <= '1' when (OPCODE = LDA OR OPCODE = SOMA OR OPCODE = SUB OR OPCODE = LDI OR OPCODE = ADDI OR OPCODE = SUBI) else '0';
+	SEL_MUX 		<= '1' when (OPCODE = LDI OR OPCODE = ADDI OR OPCODE = SUBI) else '0';
+	JMP_GT 		<= '1' when (OPCODE = JGT) else '0';
+	JMP_EQ 		<= '1' when (OPCODE = JEQ) else '0';
+	JMP_SR 		<= '1' when (OPCODE = JSR) else '0';
+	RET_SR 		<= '1' when (OPCODE = RET) else '0';
+	JUMP 			<= '1' when (OPCODE = JMP) else '0';
+	HAB_RET 		<= '1' when (OPCODE = JSR) else '0';
+	OP_ULA 		<= "100" when (OPCODE = GRT) else 
+						"011" when (OPCODE = CEQ) else
+						"010" when (OPCODE = LDA OR OPCODE = LDI) else 
+						"001" when (OPCODE = SOMA OR OPCODE = ADDI) else 
+						"000";
  
-saida <= "000000000000000" when opcode = NOP else
-         "000000010100010" when opcode = LDA else
-         "000000010010010" when opcode = SOMA else
-         "000000010000010" when opcode = SUB else
-         "000000110100000" when opcode = LDI else
-         "000000000000001" when opcode = STA else
-			"010000000000000" when opcode = JMP else
-			"000010000000000" when opcode = JEQ else			
-			"000000000111010" when opcode = CEQ else	
-			"100100000000000" when opcode = JSR else
-			"001000000000000" when opcode = RET else
-			"000000001000110" when opcode = GRT else
-			"000001000000000" when opcode = JGT else
-			"000000000000000";  -- NOP para os opcodes Indefinidos
+saida <= HAB_RET & JUMP & RET_SR & JMP_SR & JMP_EQ & JMP_GT & SEL_MUX & HAB_BAN_REG & OP_ULA & HAB_FLAG_EQ & HAB_FLAG_GT & RD & WR;
 --			
 end architecture;
