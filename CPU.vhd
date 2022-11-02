@@ -6,7 +6,7 @@ entity CPU is
   port(
 		CLK					: in std_logic;
 		RESET					: in std_logic;
-		INSTRUCTION_IN		: in std_logic_vector(12 DOWNTO 0);
+		INSTRUCTION_IN		: in std_logic_vector(15 DOWNTO 0);
 		DATA_IN				: in std_logic_vector(7 DOWNTO 0);
 		RD						: out std_logic;
 		WR						: out std_logic;
@@ -58,10 +58,18 @@ MUX_PC : entity work.muxGenerico4x1  generic map (larguraDados => 9)
 				saida_MUX =>  SIG_MUXJMP_TO_PC
 			);
 
-
 -- Acumulador A, para armazenar o dado necessário durante cada clock
-REGA : entity work.registradorGenerico   generic map (larguraDados => 8)
-          port map(DIN => SIG_SAIDA_ULA, DOUT => SIG_REGA_TO_ULA, ENABLE => SIG_SAIDA_DECODER(7), CLK => CLK, RST => RESET);
+--REGA : entity work.registradorGenerico   generic map (larguraDados => 8)
+--          port map(DIN => SIG_SAIDA_ULA, DOUT => SIG_REGA_TO_ULA, ENABLE => SIG_SAIDA_DECODER(7), CLK => CLK, RST => RESET);
+
+BAN_REG_A: entity work.bancoRegistradoresArqRegMem   generic map (larguraDados => 8, larguraEndBancoRegs => 3)
+			port map ( 
+				clk => CLK,
+				endereco => INSTRUCTION_IN(11 DOWNTO 9),
+				dadoEscrita => SIG_SAIDA_ULA,
+				habilitaEscrita => SIG_SAIDA_DECODER(7),
+				saida => SIG_REGA_TO_ULA
+			);
 			 
 -- Acumulador do endereço de retorno de sub rotinas, armazena sempre o endereço + 1 da chamada da sub rotina
 REG_RET : entity work.registradorGenerico   generic map (larguraDados => 9)
@@ -95,7 +103,7 @@ ULA : entity work.ULASomaSub  generic map(larguraDados => 8)
           port map(entradaA => SIG_REGA_TO_ULA, entradaB => SIG_MUX_TO_ULA, saida => SIG_SAIDA_ULA, seletor => SIG_SAIDA_DECODER(6 DOWNTO 4), saida_flag_zero => SIG_SAIDA_ULA_FLAG0, saida_gt => SIG_SAIDA_ULA_GT);
 
 -- Decodificador de instruções, usado para traduzir o OpCode em seus determinados pontos de controle			 
-DECODER : entity work.decoderInstru port map(opCode => INSTRUCTION_IN(12 DOWNTO 9), saida => SIG_SAIDA_DECODER);
+DECODER : entity work.decoderInstru port map(opCode => INSTRUCTION_IN(15 DOWNTO 12), saida => SIG_SAIDA_DECODER);
 			 
 
 -- Atribuindo os respectivos valores aos sinais de saída da CPU para serem usados no Contador
