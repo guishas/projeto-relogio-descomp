@@ -5,7 +5,7 @@ use ieee.std_logic_1164.all;
 entity Relogio is
 
   generic(
-		simulacao : boolean := TRUE -- para gravar na placa, altere de TRUE para FALSE
+		simulacao : boolean := FALSE -- para gravar na placa, altere de TRUE para FALSE
   );
 
   port(
@@ -31,6 +31,7 @@ architecture arquitetura of Relogio is
 
 -- Sinais para o Contador:
 	signal SIG_CLK						: std_logic;
+	signal SIG_HAB_CLK_1_SEC		: std_logic;
 	signal SIG_RD						: std_logic;
 	signal SIG_WR						: std_logic;
 	signal SIG_HAB_LED_0_TO_7		: std_logic;
@@ -61,7 +62,9 @@ architecture arquitetura of Relogio is
 	signal SIG_LIMPA_LEITURA_KEY0	: std_logic;
 	signal SIG_LIMPA_LEITURA_KEY1	: std_logic;
 	signal SIG_LIMPA_LEITURA_KEY2	: std_logic;
-	signal SIG_LIMPA_FF_CLK			: std_logic;
+	signal SIG_LIMPA_CLK_1_SEC		: std_logic;
+	signal SIG_SAIDA_DIVISOR		: std_logic;
+	signal SIG_CLK_1_SEC				: std_logic_vector(7 DOWNTO 0);
 	signal SIG_CPU_TO_ROM 			: std_logic_vector(8 DOWNTO 0);
 	signal SIG_ROM_TO_INSTRUCTION : std_logic_vector(15 DOWNTO 0);
 	signal SIG_CPU_DATA_ADDR_OUT 	: std_logic_vector(8 DOWNTO 0);
@@ -84,20 +87,20 @@ else generate
 
 -- Quando estamos na placa, devemos usar o CLOCK_50
 
---divisor : entity work.divisorGenerico	generic map (divisor => 25000000)
---            port map (clk => CLOCK_50, saida_clk => SIG_CLK);
-				
-interfaceBaseTempo : entity work.divisorGenerico_e_Interface generic map (divisorBase => 25000000)
-              port map (
-					  clk => CLOCK_50,
-					  habilitaLeitura => '1',
-					  limpaLeitura => SIG_LIMPA_FF_CLK,
-					  leituraUmSegundo => SIG_CLK
-				  );
-
+	SIG_CLK <= CLOCK_50;
+	
 end generate;
 
 -- Instanciando os componentes:
+
+interfaceBaseTempo : entity work.divisorGenerico_e_Interface generic map (divisorBase => 25000000)
+			port map (
+			  clk => CLOCK_50,
+			  habilitaLeitura => SIG_HAB_CLK_1_SEC,
+			  limpaLeitura => SIG_LIMPA_CLK_1_SEC,
+			  leituraUmSegundo => SIG_CLK_1_SEC
+			);
+
 
 -- A nossa CPU, dentro dela tem comentários explicando seus componentes, aqui ela tem seu propósito definido
 CPU : entity work.CPU 
@@ -352,7 +355,27 @@ TRI_STATE_SW9 : entity work.buffer_3_state
 SIG_LIMPA_LEITURA_KEY0 <= SIG_WR AND SIG_CPU_DATA_ADDR_OUT(0) AND SIG_CPU_DATA_ADDR_OUT(1) AND SIG_CPU_DATA_ADDR_OUT(2) AND SIG_CPU_DATA_ADDR_OUT(3) AND SIG_CPU_DATA_ADDR_OUT(4) AND SIG_CPU_DATA_ADDR_OUT(5) AND SIG_CPU_DATA_ADDR_OUT(6) AND SIG_CPU_DATA_ADDR_OUT(7) AND SIG_CPU_DATA_ADDR_OUT(8);
 SIG_LIMPA_LEITURA_KEY1 <= SIG_WR AND (NOT SIG_CPU_DATA_ADDR_OUT(0)) AND SIG_CPU_DATA_ADDR_OUT(1) AND SIG_CPU_DATA_ADDR_OUT(2) AND SIG_CPU_DATA_ADDR_OUT(3) AND SIG_CPU_DATA_ADDR_OUT(4) AND SIG_CPU_DATA_ADDR_OUT(5) AND SIG_CPU_DATA_ADDR_OUT(6) AND SIG_CPU_DATA_ADDR_OUT(7) AND SIG_CPU_DATA_ADDR_OUT(8);
 SIG_LIMPA_LEITURA_KEY2 <= SIG_WR AND SIG_CPU_DATA_ADDR_OUT(0) AND (not SIG_CPU_DATA_ADDR_OUT(1)) AND SIG_CPU_DATA_ADDR_OUT(2) AND SIG_CPU_DATA_ADDR_OUT(3) AND SIG_CPU_DATA_ADDR_OUT(4) AND SIG_CPU_DATA_ADDR_OUT(5) AND SIG_CPU_DATA_ADDR_OUT(6) AND SIG_CPU_DATA_ADDR_OUT(7) AND SIG_CPU_DATA_ADDR_OUT(8);			
-SIG_LIMPA_FF_CLK <= SIG_WR AND (not SIG_CPU_DATA_ADDR_OUT(0)) AND (not SIG_CPU_DATA_ADDR_OUT(1)) AND SIG_CPU_DATA_ADDR_OUT(2) AND SIG_CPU_DATA_ADDR_OUT(3) AND SIG_CPU_DATA_ADDR_OUT(4) AND SIG_CPU_DATA_ADDR_OUT(5) AND SIG_CPU_DATA_ADDR_OUT(6) AND SIG_CPU_DATA_ADDR_OUT(7) AND SIG_CPU_DATA_ADDR_OUT(8);
+SIG_LIMPA_CLK_1_SEC <= SIG_WR AND
+						(not SIG_CPU_DATA_ADDR_OUT(0)) AND
+						(not SIG_CPU_DATA_ADDR_OUT(1)) AND
+						SIG_CPU_DATA_ADDR_OUT(2) AND
+						SIG_CPU_DATA_ADDR_OUT(3) AND
+						SIG_CPU_DATA_ADDR_OUT(4) AND
+						SIG_CPU_DATA_ADDR_OUT(5) AND
+						SIG_CPU_DATA_ADDR_OUT(6) AND
+						SIG_CPU_DATA_ADDR_OUT(7) AND
+						SIG_CPU_DATA_ADDR_OUT(8); -- 508
+
+SIG_HAB_CLK_1_SEC <= SIG_RD AND
+							SIG_CPU_DATA_ADDR_OUT(0) AND
+							SIG_CPU_DATA_ADDR_OUT(1) AND
+							(not SIG_CPU_DATA_ADDR_OUT(2)) AND
+							SIG_CPU_DATA_ADDR_OUT(3) AND
+							SIG_CPU_DATA_ADDR_OUT(4) AND
+							SIG_CPU_DATA_ADDR_OUT(5) AND
+							SIG_CPU_DATA_ADDR_OUT(6) AND
+							SIG_CPU_DATA_ADDR_OUT(7) AND
+							SIG_CPU_DATA_ADDR_OUT(8); --507
 
 SIG_HAB_SW0_TO_7 <= 	SIG_RD AND SIG_DECODER_LED_OUT(0) AND SIG_DECODER_BLOCO_OUT(5) AND (NOT SIG_CPU_DATA_ADDR_OUT(5));
 SIG_HAB_SW8 <= SIG_RD AND SIG_DECODER_LED_OUT(1) AND SIG_DECODER_BLOCO_OUT(5) AND (NOT SIG_CPU_DATA_ADDR_OUT(5));
@@ -380,6 +403,7 @@ LEDR(8) <= SIG_FF_LED_TO_LED8;
 LEDR(9) <= SIG_FF_LED_TO_LED9;
 
 SIG_RAM_TO_CPU_DATA <= SIG_KEY_SW_OUT;
+SIG_RAM_TO_CPU_DATA <= SIG_CLK_1_SEC;
 PC_OUT <= SIG_CPU_TO_ROM;
 
 SAIDA_ULA <= SIG_CPU_TO_RAM_DATA;

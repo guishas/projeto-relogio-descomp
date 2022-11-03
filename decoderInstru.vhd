@@ -43,7 +43,7 @@ architecture comportamento of decoderInstru is
  begin
 		
 	WR 			<= '1' when (OPCODE = STA) else '0';
-	RD 			<= '1' when (OPCODE = STA OR OPCODE = SOMA OR OPCODE = SUB OR OPCODE = CEQ OR OPCODE = GRT) else '0';
+	RD 			<= '1' when (OPCODE = LDA OR OPCODE = SOMA OR OPCODE = SUB OR OPCODE = CEQ OR OPCODE = GRT) else '0';
 	HAB_FLAG_GT <= '1' when (OPCODE = GRT) else '0';
 	HAB_FLAG_EQ <= '1' when (OPCODE = CEQ) else '0';
 	HAB_BAN_REG <= '1' when (OPCODE = LDA OR OPCODE = SOMA OR OPCODE = SUB OR OPCODE = LDI OR OPCODE = ADDI OR OPCODE = SUBI) else '0';

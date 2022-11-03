@@ -7,7 +7,7 @@ entity divisorGenerico_e_Interface is
    port(clk      :   in std_logic;
       habilitaLeitura : in std_logic;
       limpaLeitura : in std_logic;
-      leituraUmSegundo :   out std_logic
+      leituraUmSegundo :   out std_logic_vector(7 DOWNTO 0)
    );
 end entity;
 
@@ -26,6 +26,6 @@ registraUmSegundo: entity work.flipFlop
          RST => limpaLeitura);
 
 -- Faz o tristate de saida:
-leituraUmSegundo <= sinalUmSegundo when habilitaLeitura = '1' else 'Z';
+leituraUmSegundo <= "0000000" & sinalUmSegundo when habilitaLeitura = '1' else "ZZZZZZZZ";
 
 end architecture interface;
