@@ -26,19 +26,6 @@ def converteHashtag(line):
 def converteMnemonico(line):
   return line.replace("\n", "").split(' ')[0]
 
-# Função para converter o que vem do arquivo de entrada para código assembly
-def converteParaLabel(line):
-  if '@' in line:
-    l = converteMnemonico(line) + ' & \"' + converteHashtag(line) + '\" & \"' + converteArroba(line) + '\";'
-  elif '$' in line:
-    l = converteMnemonico(line) + ' & \"' + converteHashtag(line) + '\" & \"' + converteCifrao(line) + '\";'
-  elif '%' in line:
-    l = converteMnemonico(line) + ' & \"' + '000\" & \"' + line.split('%')[-1].replace("\n", "") + '\";'
-  else:
-    l = line
-
-  return l 
-
 # Função para retornar a posição da memória de instruções de uma linha
 def pegaPosicaoTmp(line):
   return line.split('(')[0][:1]
