@@ -103,21 +103,22 @@ interfaceBaseTempo_normal : entity work.divisorGenerico_e_Interface generic map 
 			  leituraUmSegundo => SIG_CLK_1_SEC_NORMAL
 			);
 
-interfaceBaseTempo_rapido : entity work.divisorGenerico_e_Interface generic map (divisorBase => 2500000)
-			port map (
-			  clk => CLOCK_50,
-			  habilitaLeitura => SIG_HAB_CLK_1_SEC,
-			  limpaLeitura => SIG_LIMPA_CLK_1_SEC,
-			  leituraUmSegundo => SIG_CLK_1_SEC_RAPIDO
-			);
+--interfaceBaseTempo_rapido : entity work.divisorGenerico_e_Interface generic map (divisorBase => 2500000)
+--			port map (
+--			  clk => CLOCK_50,
+--			  habilitaLeitura => SIG_HAB_CLK_1_SEC,
+--			  limpaLeitura => SIG_LIMPA_CLK_1_SEC,
+--			  leituraUmSegundo => SIG_CLK_1_SEC_RAPIDO
+--			);
 
-MUX_CLK : entity work.muxGenerico2x1 	generic map (larguraDados => 8)
-			port map(
-				entradaA_MUX => SIG_CLK_1_SEC_NORMAL,
-				entradaB_MUX => SIG_CLK_1_SEC_RAPIDO,
-				seletor_MUX => SW(9),
-				saida_MUX => SIG_CLK_1_SEC
-			);
+			
+--MUX_CLOCK : entity work.muxGenerico2x1 generic map (larguraDados => 8)
+--			port map(
+--				entradaA_MUX => SIG_CLK_1_SEC_NORMAL,
+--				entradaB_MUX => SIG_CLK_1_SEC_RAPIDO,
+--				seletor_MUX => SW(9),
+--				saida_MUX => SIG_CLK_1_SEC
+--			);
 
 -- A nossa CPU, dentro dela tem comentários explicando seus componentes, aqui ela tem seu propósito definido
 CPU : entity work.CPU 
@@ -420,7 +421,7 @@ LEDR(8) <= SIG_FF_LED_TO_LED8;
 LEDR(9) <= SIG_FF_LED_TO_LED9;
 
 SIG_RAM_TO_CPU_DATA <= SIG_KEY_SW_OUT;
-SIG_RAM_TO_CPU_DATA <= SIG_CLK_1_SEC;
+SIG_RAM_TO_CPU_DATA <= SIG_CLK_1_SEC_NORMAL;
 PC_OUT <= SIG_CPU_TO_ROM;
 
 SAIDA_ULA <= SIG_CPU_TO_RAM_DATA;
