@@ -30,50 +30,52 @@ end entity;
 architecture arquitetura of Relogio is
 
 -- Sinais para o Contador:
-	signal SIG_CLK						: std_logic;
-	signal SIG_HAB_CLK_1_SEC		: std_logic;
-	signal SIG_RD						: std_logic;
-	signal SIG_WR						: std_logic;
-	signal SIG_HAB_LED_0_TO_7		: std_logic;
-	signal SIG_HAB_LED8				: std_logic;
-	signal SIG_HAB_LED9				: std_logic;
-	signal SIG_FF_LED_TO_LED8		: std_logic;
-	signal SIG_FF_LED_TO_LED9		: std_logic;
-	signal SIG_HAB_HEX0				: std_logic;
-	signal SIG_HAB_HEX1				: std_logic;
-	signal SIG_HAB_HEX2				: std_logic;
-	signal SIG_HAB_HEX3				: std_logic;
-	signal SIG_HAB_HEX4				: std_logic;
-	signal SIG_HAB_HEX5				: std_logic;
-	signal SIG_HAB_KEY0				: std_logic;
-	signal SIG_HAB_KEY1				: std_logic;
-   signal SIG_HAB_KEY2				: std_logic;
-	signal SIG_HAB_KEY3				: std_logic;
-	signal SIG_HAB_FPGA_RESET		: std_logic;
-	signal SIG_HAB_SW9				: std_logic;
-	signal SIG_HAB_SW8				: std_logic;
-	signal SIG_HAB_SW0_TO_7			: std_logic;
-	signal SIG_DETECTOR_KEY0_OUT	: std_logic;
-	signal SIG_DETECTOR_KEY1_OUT  : std_logic;
-	signal SIG_DETECTOR_KEY2_OUT	: std_logic;
-	signal SIG_DETECT_TSTATE_KEY0	: std_logic;
-	signal SIG_DETECT_TSTATE_KEY1	: std_logic;
-	signal SIG_DETECT_TSTATE_KEY2	: std_logic;
-	signal SIG_LIMPA_LEITURA_KEY0	: std_logic;
-	signal SIG_LIMPA_LEITURA_KEY1	: std_logic;
-	signal SIG_LIMPA_LEITURA_KEY2	: std_logic;
-	signal SIG_LIMPA_CLK_1_SEC		: std_logic;
-	signal SIG_SAIDA_DIVISOR		: std_logic;
-	signal SIG_CLK_1_SEC				: std_logic_vector(7 DOWNTO 0);
-	signal SIG_CPU_TO_ROM 			: std_logic_vector(8 DOWNTO 0);
-	signal SIG_ROM_TO_INSTRUCTION : std_logic_vector(15 DOWNTO 0);
-	signal SIG_CPU_DATA_ADDR_OUT 	: std_logic_vector(8 DOWNTO 0);
-	signal SIG_RAM_TO_CPU_DATA		: std_logic_vector(7 DOWNTO 0);
-	signal SIG_CPU_TO_RAM_DATA 	: std_logic_vector(7 DOWNTO 0);
-	signal SIG_DECODER_BLOCO_OUT	: std_logic_vector(7 DOWNTO 0);
-	signal SIG_DECODER_LED_OUT		: std_logic_vector(7 DOWNTO 0);
-	signal SIG_REG_LED_TO_LEDR		: std_logic_vector(7 DOWNTO 0);
-	signal SIG_KEY_SW_OUT			: std_logic_vector(7	DOWNTO 0);
+	signal SIG_CLK							: std_logic;
+	signal SIG_HAB_CLK_1_SEC			: std_logic;
+	signal SIG_RD							: std_logic;
+	signal SIG_WR							: std_logic;
+	signal SIG_HAB_LED_0_TO_7			: std_logic;
+	signal SIG_HAB_LED8					: std_logic;
+	signal SIG_HAB_LED9					: std_logic;
+	signal SIG_FF_LED_TO_LED8			: std_logic;
+	signal SIG_FF_LED_TO_LED9			: std_logic;
+	signal SIG_HAB_HEX0					: std_logic;
+	signal SIG_HAB_HEX1					: std_logic;
+	signal SIG_HAB_HEX2					: std_logic;
+	signal SIG_HAB_HEX3					: std_logic;
+	signal SIG_HAB_HEX4					: std_logic;
+	signal SIG_HAB_HEX5					: std_logic;
+	signal SIG_HAB_KEY0					: std_logic;
+	signal SIG_HAB_KEY1					: std_logic;
+   signal SIG_HAB_KEY2					: std_logic;
+	signal SIG_HAB_KEY3					: std_logic;
+	signal SIG_HAB_FPGA_RESET			: std_logic;
+	signal SIG_HAB_SW9					: std_logic;
+	signal SIG_HAB_SW8					: std_logic;
+	signal SIG_HAB_SW0_TO_7				: std_logic;
+	signal SIG_DETECTOR_KEY0_OUT		: std_logic;
+	signal SIG_DETECTOR_KEY1_OUT  	: std_logic;
+	signal SIG_DETECTOR_KEY2_OUT		: std_logic;
+	signal SIG_DETECT_TSTATE_KEY0		: std_logic;
+	signal SIG_DETECT_TSTATE_KEY1		: std_logic;
+	signal SIG_DETECT_TSTATE_KEY2		: std_logic;
+	signal SIG_LIMPA_LEITURA_KEY0		: std_logic;
+	signal SIG_LIMPA_LEITURA_KEY1		: std_logic;
+	signal SIG_LIMPA_LEITURA_KEY2		: std_logic;
+	signal SIG_LIMPA_CLK_1_SEC			: std_logic;
+	signal SIG_SAIDA_DIVISOR			: std_logic;
+	signal SIG_CLK_1_SEC					: std_logic_vector(7 DOWNTO 0);
+	signal SIG_CLK_1_SEC_NORMAL		: std_logic_vector(7 DOWNTO 0);
+	signal SIG_CLK_1_SEC_RAPIDO		: std_logic_vector(7 DOWNTO 0);
+	signal SIG_CPU_TO_ROM 				: std_logic_vector(8 DOWNTO 0);
+	signal SIG_ROM_TO_INSTRUCTION 	: std_logic_vector(15 DOWNTO 0);
+	signal SIG_CPU_DATA_ADDR_OUT 		: std_logic_vector(8 DOWNTO 0);
+	signal SIG_RAM_TO_CPU_DATA			: std_logic_vector(7 DOWNTO 0);
+	signal SIG_CPU_TO_RAM_DATA 		: std_logic_vector(7 DOWNTO 0);
+	signal SIG_DECODER_BLOCO_OUT		: std_logic_vector(7 DOWNTO 0);
+	signal SIG_DECODER_LED_OUT			: std_logic_vector(7 DOWNTO 0);
+	signal SIG_REG_LED_TO_LEDR			: std_logic_vector(7 DOWNTO 0);
+	signal SIG_KEY_SW_OUT				: std_logic_vector(7	DOWNTO 0);
 
 begin
 
@@ -93,14 +95,29 @@ end generate;
 
 -- Instanciando os componentes:
 
-interfaceBaseTempo : entity work.divisorGenerico_e_Interface generic map (divisorBase => 25000000)
+interfaceBaseTempo_normal : entity work.divisorGenerico_e_Interface generic map (divisorBase => 25000000)
 			port map (
 			  clk => CLOCK_50,
 			  habilitaLeitura => SIG_HAB_CLK_1_SEC,
 			  limpaLeitura => SIG_LIMPA_CLK_1_SEC,
-			  leituraUmSegundo => SIG_CLK_1_SEC
+			  leituraUmSegundo => SIG_CLK_1_SEC_NORMAL
 			);
 
+interfaceBaseTempo_rapido : entity work.divisorGenerico_e_Interface generic map (divisorBase => 2500000)
+			port map (
+			  clk => CLOCK_50,
+			  habilitaLeitura => SIG_HAB_CLK_1_SEC,
+			  limpaLeitura => SIG_LIMPA_CLK_1_SEC,
+			  leituraUmSegundo => SIG_CLK_1_SEC_RAPIDO
+			);
+
+MUX_CLK : entity work.muxGenerico2x1 	generic map (larguraDados => 8)
+			port map(
+				entradaA_MUX => SIG_CLK_1_SEC_NORMAL,
+				entradaB_MUX => SIG_CLK_1_SEC_RAPIDO,
+				seletor_MUX => SW(9),
+				saida_MUX => SIG_CLK_1_SEC
+			);
 
 -- A nossa CPU, dentro dela tem comentários explicando seus componentes, aqui ela tem seu propósito definido
 CPU : entity work.CPU 
