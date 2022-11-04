@@ -95,30 +95,15 @@ end generate;
 
 -- Instanciando os componentes:
 
-interfaceBaseTempo_normal : entity work.divisorGenerico_e_Interface generic map (divisorBase => 25000000)
+interfaceBaseTempo : entity work.divisorGenerico_e_Interface generic map (divisor_normal => 25000000, divisor_rapido => 25000)
 			port map (
 			  clk => CLOCK_50,
 			  habilitaLeitura => SIG_HAB_CLK_1_SEC,
 			  limpaLeitura => SIG_LIMPA_CLK_1_SEC,
-			  leituraUmSegundo => SIG_CLK_1_SEC_NORMAL
+			  sel_mux => SW(9),
+			  leituraUmSegundo => SIG_CLK_1_SEC
 			);
-
---interfaceBaseTempo_rapido : entity work.divisorGenerico_e_Interface generic map (divisorBase => 2500000)
---			port map (
---			  clk => CLOCK_50,
---			  habilitaLeitura => SIG_HAB_CLK_1_SEC,
---			  limpaLeitura => SIG_LIMPA_CLK_1_SEC,
---			  leituraUmSegundo => SIG_CLK_1_SEC_RAPIDO
---			);
-
 			
---MUX_CLOCK : entity work.muxGenerico2x1 generic map (larguraDados => 8)
---			port map(
---				entradaA_MUX => SIG_CLK_1_SEC_NORMAL,
---				entradaB_MUX => SIG_CLK_1_SEC_RAPIDO,
---				seletor_MUX => SW(9),
---				saida_MUX => SIG_CLK_1_SEC
---			);
 
 -- A nossa CPU, dentro dela tem comentários explicando seus componentes, aqui ela tem seu propósito definido
 CPU : entity work.CPU 
@@ -421,7 +406,7 @@ LEDR(8) <= SIG_FF_LED_TO_LED8;
 LEDR(9) <= SIG_FF_LED_TO_LED9;
 
 SIG_RAM_TO_CPU_DATA <= SIG_KEY_SW_OUT;
-SIG_RAM_TO_CPU_DATA <= SIG_CLK_1_SEC_NORMAL;
+SIG_RAM_TO_CPU_DATA <= SIG_CLK_1_SEC;
 PC_OUT <= SIG_CPU_TO_ROM;
 
 SAIDA_ULA <= SIG_CPU_TO_RAM_DATA;
