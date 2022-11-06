@@ -95,7 +95,7 @@ end generate;
 
 -- Instanciando os componentes:
 
-interfaceBaseTempo : entity work.divisorGenerico_e_Interface generic map (divisor_normal => 25000000, divisor_rapido => 25000)
+interfaceBaseTempo : entity work.divisorGenerico_e_Interface generic map (divisor_normal => 25000000, divisor_rapido => 35000)
 			port map (
 			  clk => CLOCK_50,
 			  habilitaLeitura => SIG_HAB_CLK_1_SEC,
